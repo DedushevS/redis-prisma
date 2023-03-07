@@ -1,6 +1,6 @@
-import {Controller, DefaultValuePipe, HttpStatus, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
+import {Controller, Get, ParseIntPipe, Post, Query} from '@nestjs/common';
 import {AppService} from './app.service';
-import {postDto} from "./app.dto";
+import {CreatePostDto, PostDto, UpdatePostDto} from "./app.dto";
 
 @Controller()
 export class AppController {
@@ -15,35 +15,24 @@ export class AppController {
   }
 
   @Post('createPost')
-  public async createPost(
-    @Query('authorId', ParseIntPipe) authorId: number,
-    @Query('title') title: string,
-    @Query('content') content: string,
-  ) {
-    const post = new postDto(title, content, authorId)
+  public async createPost(@Query() createdPost: CreatePostDto) {
+    const post = new PostDto(createdPost.title, createdPost.content, createdPost.authorId)
     return this.appService.createPost(post)
   }
 
-
   @Post('updatePost')
-  public async updatePost(
-    @Query('postId', new ParseIntPipe()) postId: number,
-    @Param('title', new DefaultValuePipe('')) title?: string,
-    @Param('content', new DefaultValuePipe('')) content?: string,) {
-    return this.appService.updatePost(postId, title, content);
+  public async updatePost(@Query() updatedPost: UpdatePostDto) {
+    return this.appService.updatePost(updatedPost.postId, updatedPost.title, updatedPost.content);
   }
 
-//
-// @Get('UserAndPosts')
-// public async findUserAndPosts(userId) {
-//   return this.appService.findUserAndPosts(userId);
-// }
-//
-// @Get('UsersAndPosts')
-// public async findUsersAndPosts([usersIds]) {
-//   return this.appService.findUsersAndPosts([usersIds]);
-// }
+  @Get('UserAndPosts')
+  public async findUserAndPosts(@Query('authorId', ParseIntPipe) authorId: number) {
+    return this.appService.findUserAndPosts(authorId);
+  }
 
-
+  @Get('UsersAndPosts')
+  public async findUsersAndPosts(@Query('usersIds') usersIds: []) {
+    return this.appService.findUsersAndPosts(usersIds);
+  }
 }
 
