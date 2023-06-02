@@ -23,7 +23,7 @@ export class AppService {
         title: post.title,
         content: post.content,
         published: post.published,
-        author: {connect: {id: post.authorId}}
+        author: {connect: {id: Number(post.authorId)}}
       }
     })
   };
